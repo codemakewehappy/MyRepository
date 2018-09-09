@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Smart Delivery To Nokia{% endblock %}
+
+{% block css %}
+
+<!-- DataTables -->
+  <link type="text/css" rel="stylesheet" href="http://static.tctip.com/css/myRewards.css">
+  <link rel="stylesheet" href="{% static 'plugins/datatables/dataTables.bootstrap.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/cxCalendar/css/jquery.cxcalendar.css' %}">
+      <style>
+                table{
+         table-layout:fixed;
+        }
+        table tr td{
+        word-wrap:break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        }
+        table tr td:hover{
+           overflow: visible;
+           white-space: normal;
+        }
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc{
+                background-image:none;
+          }
+      </style>
+
+   <style>
+     .myRewards {position:fixed; _position:absolute; right:0; top:10%; z-index:10000; padding-left:30px; width:0px; overflow:hidden; box-sizing: content-box;}
+.myRewards ul,.myRewards li{margin:0;padding:0;}
+.myRewards img{ border:0; display:block;}
+.myRewards a{ color:#000; text-decoration:none; outline:0 none;}
+.myRewards-main{ width:240px; height:342px; font:12px/1.5 "microsoft yahei",tahoma,arial,sans-serif;; color:#000; background-color:#fff; border:1px solid #dbdbdb; border-right:none;}
+.btn-myRewards{ position:absolute; left:0; top:50%; margin-top:-72px;}
+.myR-h,.myR-bot{ margin:0; background-color:#e7e7e7;}
+.myRewards-main .myR-h{ padding:0 0 0 6px; font-size:14px; font-weight:normal; background-image:none; padding-left: 1em; height:36px; line-height:36px;}
+.myRewards-main .myR-bot{ padding-right:6px; font-size:12px; text-align:right; height:26px; line-height:26px;}
+.myR-bot a:hover{ text-decoration:underline;}
+.myRewardsbox{ font-size:0; background-color:#eeeeee; width:240px;}
+.myRewards-list{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:90px; font-size:12px;}
+.myRewards-list ul{ list-style:none;}
+.myRewards-list ul.not-full{border-top:1px solid #dfdfdf;}
+.myRewards-list li{ display:block; height:56px; -webkit-transition:background-color .2s linear; transition:background-color .2s linear;}
+.myRewards-list a{ position:relative; display:block; padding-left:40px; height:55px; line-height:55px; font-size:12px; border-bottom:1px solid #cccccc;}
+.myRewards-list a.fifth{border-bottom: none;}
+.myRewards-list a img{ position:absolute; left:6px; top:13px; width:30px; height:30px;}
+.myRewards-list .myR-on{ border-right:none;}
+.myRewards-list .myR-on a,
+.myRewards-list .myR-on a:hover{ background-color:#fff;}
+.myRewards-detail{ display:inline-block; *display:inline; *zoom:1; vertical-align:middle; width:150px; height:280px; font-size:12px; background-color:#fff;}
+.myRewards-ubox{ padding:14px 0 0 10px;}
+.myRewards-code-tit{ margin:0 0 20px; width:132px; height:30px; line-height:30px; font-size:12px; text-align:center; background-color: #e7e7e7; border-radius: 10px;}
+.myRewards-code{ margin:0 0 20px; padding:12px; width:106px; min-height: 106px; box-sizing: content-box; border:1px solid #ccc; border-radius: 14px; background-color: #fff;}
+.myRewards-code img{ width:106px; height:106px;}
+.i-myRewards{ position:absolute; right:6px; top:16px; width:23px; height:23px; line-height:23px; font-size:14px; color:#44b973; text-align:center; background:url(../img/tab_shang.png) no-repeat;}
+.myRewards-account{ font-size:12px; word-break:break-all; text-align:center;}
+.myRewards .sider-text{ font-size: 17px; width: 30px; text-align: center; background-color: #323d45; margin: 0; padding: 1em 0; border-radius: 12px; border-top-right-radius: 0; border-bottom-right-radius: 0; color: #fff; font-family: 微软雅黑,Tahoma,Verdana,Arial;}
+.myRewards .sider-close{float: right;height: 36px;line-height: 36px;font-family: sans-serif;width: 30px;text-align: center;color: #777;font-weight: bold;cursor: pointer;}
+   </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <!--&lt;!&ndash; Content Header (Page header) &ndash;&gt;-->
+    <section class="content-header">
+      <h1>
+      Search
+        <small>货运单搜索</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Main</a></li>
+        <li class="active">Search</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" >
+      <div class="row" style="width:100%;height:100%;padding-left:130px;padding-right:50px;padding-top:100px;">
+        <div class="box"  >
+
+        <!-- /.box-header -->
+
+         <div class="box-body ">
+            <form action="/collec/searchorder/" method="post">
+              {% csrf_token %}
+             <br>
+                <strong>Shipment ID：</strong> <input id="addOrder" name="Order" type="text" style="width:220px;">
+
+            <br>
+            <br>
+
+           <table  class="table table-bordered table-striped">
+            <thead>
+             <tr>
+
+              <th>Purchase Order <br>
+                  <span>(合同号)</span></th>
+              <th>Packages Qty <br>
+              <span>(包裹数量)</span></th>
+              <th>Gross Weight <br>
+              <span>(重量)</span>
+                   </th>
+              <th>Volume <br>
+               <span>(体积)</span>
+              </th>
+              <th>Forwarder <br>
+               <span>(承运商)</span><br>
+              </th>
+              <th>Tracking NO.<br>
+                <span>(运单号)</span>
+               </th>
+              <th>Ship from <br>
+                <span>(发货方)</span>
+               </th>
+              <th>Ship to <br>
+                <span>(接收方)</span>
+               </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr >
+                <td><input id="PO"    name="PO"  style="height: 30px;width: 100%;text-align:center;" /></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><input id="Forwarder" name="Forwarder" style="height: 30px;width: 100%;text-align:center" /></td>
+                <td><input id="Tracking" name="Tracking" style="height: 30px;width: 100%;text-align:center" /></td>
+                <td><input id="Shipfrom" name="Shipfrom" style="height: 30px;width: 100%;text-align:center" /></td>
+                <td><input id="Shipto" name="Shipto" style="height: 30px;width: 100%;text-align:center" /></td>
+
+            </tr>
+
+            </tbody>
+          </table>
+                {% if request.user.is_superuser %}
+            <table  id="table2" class="table table-bordered table-striped">
+                   <thead>
+                        <tr>
+                          <th>Part Number(产品编号)</th>
+                          <th>Product Description(产品描述)</th>
+                          <th>Serial NO.(序列号)</th>
+                          <th>Quantity(数量)</th>
+                        </tr>
+                   </thead>
+                   <tbody>
+                        <tr>
+                            <td><input type="text" name="PartNo" style="width:100%;" ></td>
+                            <td><input type="text" name="ProductDescription" style="width:100%;" ></td>
+                            <td><input type="text" name="SN" style="width:100%;" ></td>
+                            <td></td>
+                        </tr>
+                   </tbody>
+               </table>
+                {% endif %}
+
+                {% if request.user.is_superuser %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Status(货运单状态): </strong>
+                  <select name="loc" >
+                        <option></option>
+                        <option>shipped</option>
+                        <option>approved</option>
+                  </select>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Time(搜素时间): From</strong>  <input   class="input" id="element_id_1" name="fromTime" type="text">  <strong>to</strong>  <input id="element_1" class="input"  name="toTime" type="text">
+                {% endif %}
+
+                 {% if not request.user.is_superuser %}
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Status(货运单状态): </strong>
+                 <select name="loc" >
+                        <option></option>
+                        <option>draft</option>
+                        <option>shipped</option>
+                        <option>approved</option>
+                  </select>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Time(搜索时间): From</strong>  <input   class="input" id="element_id_2" name="fromTime" type="text">  <strong>to</strong>  <input id="element_2" class="input"  name="toTime" type="text">
+                {% endif %}
+
+
+            <br>
+            <br>
+            <div align="center" >
+                    <button type="submit" id="search-btn" class="btn btn-flat" style="width:100px;height:50px;">Search</button>
+            </div>
+            <br>
+
+          </form>
+        </div>
+
+        <!-- /.box-body -->
+      </div>
+    </div>
+
+    <!-- /.row -->
+    </section>
+    <div>
+          <table style="width:100%;text-align:center;"   class="display" id="example2" cellspacing="0"></table>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <!-- DataTables -->
+
+
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/cxCalendar/js/jquery.cxcalendar.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <!-- SlimScroll -->
+    <script src="{% static 'plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'plugins/fastclick/fastclick.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'dist/js/app.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <script>
+
+     window.tctipConfig = {
+
+            headText: "最新公告",
+
+            siderText: "最新公告",
+
+            siderTextTop: "-10px",
+
+            siderBgcolor: "#323d45",
+
+            siderTop:"118px",
+
+            buttomText:"了解更多",
+
+            buttomLink:"javascript:;",
+
+            list:{
+                notice: {icon: "{% static 'plugins/tctip/img/icon/tip.png' %}", name:"新公告", className:"myR-on", text: "{{noticecontent}}"},
+                alipay: {icon: "{% static 'plugins/tctip/img/icon/email.jpg' %}", name:"Email", desc: "11111112@163.com", qrimg: "{% static 'plugins/tctip/img/qr/email.jpg' %}"},
+                weixin: {icon: "{% static 'plugins/tctip/img/icon/tel.png' %}", name:"Tel", desc: "Tel：22222222222", qrimg: "{% static 'plugins/tctip/img/qr/tel.png' %}"}
+            }
+        };
+
+
+
+
+ $('#element_id_1').cxCalendar({
+  type: 'datetime',
+  format:'YYYY-MM-DD HH:mm:ss'
+}, function(api){
+  Api = api;
+});
+
+ $('#element_id_2').cxCalendar({
+  type: 'datetime',
+  format:'YYYY-MM-DD HH:mm:ss'
+}, function(api){
+  Api = api;
+});
+
+ $('#element_2').cxCalendar({
+  type: 'datetime',
+   format:'YYYY-MM-DD HH:mm:ss'
+}, function(api){
+  Api = api;
+});
+
+ $('#element_1').cxCalendar({
+  type: 'datetime',
+   format:'YYYY-MM-DD HH:mm:ss'
+}, function(api){
+  Api = api;
+});
+
+
+   </script>
+   <script src="{% static 'plugins/tctip/js/tctip.js' %}"></script>
+{% endblock %}

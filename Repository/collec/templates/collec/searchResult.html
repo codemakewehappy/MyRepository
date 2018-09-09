@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Smart Delivery To Nokia{% endblock %}
+
+{% block css %}
+
+<!-- DataTables -->
+  <!--<link rel="stylesheet" href="{% static 'plugins/datatables/dataTables.bootstrap.css' %}">-->
+  <link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/cxCalendar/css/jquery.cxcalendar.css' %}">
+      <style>
+       td.details-control {
+            text-align:center;
+            color:forestgreen;
+            cursor: pointer;
+        }
+        tr.shown td.details-control {
+            text-align:center;
+            color:red;
+        }
+                table{
+         table-layout:fixed;
+        }
+        table tr td{
+        word-wrap:break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        }
+        table tr td:hover{
+           overflow: visible;
+           white-space: normal;
+        }
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc{
+                background-image:none;
+          }
+
+
+      </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <!--&lt;!&ndash; Content Header (Page header) &ndash;&gt;-->
+    <section class="content-header">
+      <h1>
+         Search Result
+        <small>货运单搜索结果</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>Main</a></li>
+          <li class="active"> Search Result</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="padding-right:0px;">
+      <div class="row" style="width:100%;height:100%;">
+        <div class="box"  >
+
+        <!-- /.box-header -->
+
+         <div class="box-body ">
+
+            <form action="/collec/searchorder/" method="post" style="height:60%;">
+              {% csrf_token %}
+             <br>
+                <strong>Shipment ID：</strong> <input id="addOrder" name="Order" type="text" style="width:220px;">
+
+            <br>
+            <br>
+
+           <table  class="table table-bordered table-striped">
+            <thead>
+             <tr>
+
+             <th>Purchase Order <br>
+                  <span>(合同号)</span></th>
+              <th>Packages Qty <br>
+              <span>(包裹数量)</span></th>
+              <th>Gross Weight <br>
+              <span>(重量)</span>
+                   </th>
+              <th>Volume <br>
+               <span>(体积)</span>
+              </th>
+              <th>Forwarder <br>
+               <span>(承运商)</span><br>
+              </th>
+              <th>Tracking NO.<br>
+                <span>(运单号)</span>
+               </th>
+              <th>Ship from <br>
+                <span>(发货方)</span>
+               </th>
+              <th>Ship to <br>
+                <span>(接收方)</span>
+               </th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr >
+                <td><input id="PO"    name="PO"  style="height: 30px;width: 100%;text-align:center;" /></td>
+                <td></td>
+                <td></td>
+
+                <td></td>
+                <td><input id="Forwarder" name="Forwarder" style="height: 30px;width: 100%;text-align:center" /></td>
+                <td><input id="Tracking" name="Tracking" style="height: 30px;width: 100%;text-align:center" /></td>
+                <td><input id="Shipfrom" name="Shipfrom" style="height: 30px;width: 100%;text-align:center" /></td>
+                <td><input id="Shipto" name="Shipto" style="height: 30px;width: 100%;text-align:center" /></td>
+
+            </tr>
+
+            </tbody>
+          </table>
+                {% if request.user.is_superuser %}
+            <table   class="table table-bordered table-striped">
+                   <thead>
+                        <tr>
+                          <th>Part Number(产品编号)</th>
+                          <th>Product Description(产品描述)</th>
+                          <th>Serial NO.(序列号)</th>
+                          <th>Quantity(数量)</th>
+                        </tr>
+                   </thead>
+                   <tbody>
+                        <tr>
+                            <td><input type="text" name="PartNo" style="width:100%;" ></td>
+                            <td><input type="text" name="ProductDescription" style="width:100%;" ></td>
+                            <td><input type="text" name="SN" style="width:100%;" ></td>
+                            <td></td>
+                        </tr>
+                   </tbody>
+               </table>
+                {% endif %}
+              {% if request.user.is_superuser %}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Status(货运单状态): </strong>
+                  <select name="loc" >
+                        <option></option>
+                        <option>shiped</option>
+                        <option>approved</option>
+                  </select>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Time(搜索时间): From</strong>  <input   class="input" id="element_id_1" name="fromTime" type="text">  <strong>to</strong>  <input id="element_1" class="input"  name="toTime" type="text">
+                {% endif %}
+
+                 {% if not request.user.is_superuser %}
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Status(货运单状态): </strong>
+                 <select name="loc" >
+                        <option></option>
+                        <option>draft</option>
+                        <option>shiped</option>
+                        <option>approved</option>
+                  </select>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Time(搜索时间): From</strong>  <input   class="input" id="element_id_2" name="fromTime" type="text">  <strong>to</strong>  <input id="element_2" class="input"  name="toTime" type="text">
+                {% endif %}
+            <br>
+            <br>
+            <div align="center" >
+                    <button type="submit"    id="search-btn" class="btn btn-flat" style="width:100px;height:50px;">Search</button>
+            </div>
+            <br>
+
+          </form>
+          <table style="width:100%;text-align:center;" class="display" id="example" cellspacing="0">
+                  <thead>
+                    <tr>
+                        <th></th>
+                        <th>index</th>
+                        <th>ShipmentID<br>(运单ID)</th>
+                        <th>Ship from<br>(发送方)</th>
+                        <th>Ship to<br>(接收方)</th>
+                        <th>Purchase Order<br>(合同号)</th>
+                        <th>Forwarder<br>(承运商)</th>
+                        <th>Gross Weight<br>(重量)</th>
+                        <th>Volume<br>(体积)</th>
+                        <th>Tracking NO.<br>(货运单号)</th>
+                        <th>Packages Qty<br>(包裹数量)</th>
+                        <th>Receive Status</th>
+                        <th>Sent Time<br>(发送时间)</th>
+                        <th>Receive Time<br>（接收时间）</th>
+
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>index</th>
+                        <th>Shipment ID</th>
+                        <th>Ship from</th>
+                        <th>Ship to</th>
+                        <th>Purchase Order</th>
+                        <th>Forwarder</th>
+                        <th>Gross Weight</th>
+
+                        <th>Volume</th>
+                        <th>Tracking NO.</th>
+                        <th>Packages Qty</th>
+                        <th>Receive Status</th>
+                        <th>Sent Time</th>
+                        <th>Received Time</th>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+
+        <!-- /.box-body -->
+      </div>
+    </div>
+
+    <!-- /.row -->
+    </section>
+
+
+{% endblock %}
+
+{% block script %}
+    <!-- DataTables -->
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'plugins/cxCalendar/js/jquery.cxcalendar.js' %}"></script>
+    <!-- SlimScroll -->
+    <script src="{% static 'plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'plugins/fastclick/fastclick.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'dist/js/app.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <script>
+         $(document).ready(function () {
+
+         var table = $('#example').DataTable({
+             "ajax": {
+                "url":'/collec/ajax_searchOrder/',
+                "data":{'orderId':"{{orderIds}}",'PO':"{{POs}}",'Forwarder':"{{Forwarders}}",'Tracking':"{{Trackings}}",'Shipfrom':"{{Shipfroms}}",'Shipto':"{{Shiptos}}",'PartNo':"{{PartNos}}",'ProductDescription':"{{ProductDescriptions}}",'SN':"{{SNs}}",'toTime':"{{toTimes}}",'fromTime':"{{fromTimes}}",'selectval':"{{selectvalue}}"}
+             },
+             select:"single",
+             "paging": false,
+             "columns": [
+                 {
+                     "className": 'details-control',
+                     "orderable": false,
+                     "data": null,
+                     "defaultContent": '',
+                     "render": function () {
+                         return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
+                     },
+                     width:"15px"
+                 },
+                  {
+                     "targets": 1,
+                     "orderable": true,
+                     "data": null,
+                     "defaultContent": '',
+                    "render":function(data,type,row,meta){
+                        var startIndex = meta.settings._iDisplayStart;
+                         return startIndex+meta.row+1;
+                     },
+                     width:"15px"
+                 },
+                 { "data": "orderId" },
+                 { "data": "Shipfrom" },
+                 { "data": "Shipto" },
+                 { "data": "PO" },
+                 { "data": "Forwarder" },
+                 { "data": "GrossWeight" },
+                 { "data": "Volume" },
+                 { "data": "Tracking" },
+                 { "data": "Packages" },
+                  { "data": "orderreceiveButton" },
+                 { "data": "sendOrder_time"},
+                 { "data": "receiveOrder_time"}
+
+             ],
+             "order": [[1, 'asc']]
+         });
+
+         // Add event listener for opening and closing details
+         $('#example tbody').on('click', 'td.details-control', function () {
+             var tr = $(this).closest('tr');
+             var tdi = tr.find("i.fa");
+             var row = table.row(tr);
+
+             if (row.child.isShown()) {
+                 // This row is already open - close it
+                 row.child.hide();
+                 tr.removeClass('shown');
+                 tdi.first().removeClass('fa-minus-square');
+                 tdi.first().addClass('fa-plus-square');
+             }
+             else {
+
+                 row.child(format(row.data())).show();
+                 tr.addClass('shown');
+                 tdi.first().removeClass('fa-plus-square');
+                 tdi.first().addClass('fa-minus-square');
+             }
+         });
+
+         table.on("user-select", function (e, dt, type, cell, originalEvent) {
+             if ($(cell.node()).hasClass("details-control")) {
+                 e.preventDefault();
+             }
+         });
+     });
+
+function format ( rowData ) {
+    var dit = $('<div/>')
+        .addClass( 'loading' )
+        .text( 'Loading...' );
+
+    $.ajax( {
+        url: '/collec/ajax_searchasset/',
+        data: {"orderId":rowData.orderId,'PartNo':"{{PartNos}}",'ProductDescription':"{{ProductDescriptions}}",'SN':"{{SNs}}"},
+        success: function ( dats ) {
+            dit.html('<div  style="padding-left:100px;"'+'id='+'"'+'ddv'+rowData.orderId+'"'+'><table style="width:100%;text-align:center;" class="display"'+'id='+'"'+rowData.orderId+'"'+'>'+
+        '<thead>'+
+            '<tr>'+
+                 '<th>Index</th>' +
+                 '<th>Category</th>' +
+                 '<th>Part Number</th>' +
+                 '<th>Product Description</th>' +
+                 '<th>Serial NO./Delivery Methods</th>' +
+                 '<th>Sent Quantity</th>' +
+                 '<th>Receive Quantity</th>' +
+            '</tr>'+
+        '</thead>'+
+        '<tbody >'+
+         '</tbody>'+
+    '</table></div>').removeClass( 'loading' );
+
+     jt  =JSON.parse(dats)
+     dat = jt.data;
+      for(var i=0;i<dat.length;i++){
+          count =i;
+          count =count+1;
+        $('#'+rowData.orderId+' tbody').append('<tr>' +
+                 '<td>' + count+ '</td>' +
+                 '<td>' + dat[i].Category + '</td>' +
+                 '<td>' + dat[i].PartNo + '</td>' +
+                 '<td>' + dat[i].ProductDescription+ '</td>' +
+                 '<td>' +dat[i].SN + '</td>' +
+                 '<td>' + dat[i].Qty + '</td>' +
+                 '<td>'+dat[i].receiveQty+'</td>' +
+             '</tr>');
+        }
+
+        $('#'+'ddv'+rowData.orderId).after('<div style="padding-left:100px;">'+
+          '<div style="float:left;padding-left:0px;">'+
+               '<h5 id="vendorcomments"> vendor comments:</h5>'+
+               '<textarea name="vendorcomments" readonly="readonly"  style="outline:none;background:#ecf0f5;border:0px;height: 80px;width:500px;resize: none;" >'+rowData.vendorcomments+'</textarea>'+
+          '</div>'+
+          '<div style="float:right;padding-right:0px;" >'+
+               '<h5 id="vendorcomments"> receive comments:</h5>'+
+               '<textarea   readonly="readonly"   style="outline:none;background:#ecf0f5;border:0px;height: 80px;width:500px;resize: none;" >'+rowData.receivecommets+'</textarea>'+
+           '</div></div>');
+      }
+    });
+    return dit;
+}
+
+ $('#element_id_1').cxCalendar({
+  type: 'datetime',
+  format:'YYYY-MM-DD HH:mm:ss'
+}, function(api){
+  Api = api;
+});
+
+ $('#element_id_2').cxCalendar({
+  type: 'datetime',
+  format:'YYYY-MM-DD HH:mm:ss'
+}, function(api){
+  Api = api;
+});
+
+ $('#element_2').cxCalendar({
+  type: 'datetime',
+   format:'YYYY-MM-DD HH:mm:ss'
+}, function(api){
+  Api = api;
+});
+
+ $('#element_1').cxCalendar({
+  type: 'datetime',
+   format:'YYYY-MM-DD HH:mm:ss'
+}, function(api){
+  Api = api;
+});
+
+    </script>
+{% endblock %}

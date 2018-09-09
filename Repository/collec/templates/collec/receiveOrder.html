@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Smart Delivery To Nokia{% endblock %}
+
+{% block css %}
+
+<!-- DataTables -->
+  <!--<link rel="stylesheet" href="{% static 'plugins/datatables/dataTables.bootstrap.css' %}">-->
+  <link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/jquery.treeview.css' %}">
+<style>
+        td.details-control {
+            text-align:center;
+            color:forestgreen;
+            cursor: pointer;
+        }
+        tr.shown td.details-control {
+            text-align:center;
+            color:red;
+        }
+                table{
+         table-layout:fixed;
+        }
+        table tr td{
+        word-wrap:break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        }
+        table tr td:hover{
+           overflow: visible;
+           white-space: normal;
+        }
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc{
+                background-image:none;
+          }
+ .tip {
+        display:block;
+        background:#f00;
+        border-radius:50%;
+        width:8px;
+        height:8px;
+        top:0px;
+        right:0px;
+        position:absolute;
+}
+.span {
+    position:relative;
+	padding:5px;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+    <!--&lt;!&ndash; Content Header (Page header) &ndash;&gt;-->
+    <section class="content-header">
+      <h1>
+       Created Shipment
+        <small>待处理货运单</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Main</a></li>
+        <li class="active">Created Shipment</li>
+      </ol>
+    </section>
+
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+             <div class="col-xs-12">
+
+       <div class="box">
+
+        <!-- /.box-header -->
+
+        <div class="box-body">
+
+            <table style="width:100%;text-align:center;" class="display" id="example" cellspacing="0">
+                  <thead>
+                    <tr>
+                         <th></th>
+                        <th>index</th>
+                        <th>ShipmentID<br>(运单ID)</th>
+                        <th>Ship from<br>(发送方)</th>
+                        <th>Ship to<br>(接收方)</th>
+                        <th>Purchase Order<br>(合同号)</th>
+                        <th>Forwarder<br>(承运商)</th>
+                        <th>Gross Weight<br>(重量)</th>
+                        <th>Volume<br>(体积)</th>
+                        <th>Tracking NO.<br>(货运单号)</th>
+                        <th>Packages Qty<br>(包裹数量)</th>
+                        <th>Sent Time<br>(发送时间)</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                         <th></th>
+                        <th>index</th>
+                        <th>Shipment ID</th>
+                        <th>Ship from</th>
+                        <th>Ship to</th>
+                        <th>Purchase Order</th>
+                        <th>Forwarder</th>
+                        <th>Gross Weight</th>
+
+                        <th>Volume</th>
+                        <th>Tracking NO.</th>
+                        <th>Packages Qty</th>
+                        <th>Send Time</th>
+                    </tr>
+                </tfoot>
+            </table>
+
+          <!--<table id="assets_table" class="table table-bordered table-striped">-->
+
+          <!--</table>-->
+        </div>
+
+        <!-- /.box-body -->
+      </div>
+
+      <!-- /.box -->
+          </div>
+    <!-- /.col -->
+       </div>
+    <!-- /.row -->
+    </section>
+
+{% endblock %}
+
+{% block script %}
+    <!-- DataTables -->
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'plugins/jquery.treeview.js' %}"></script>
+    <!-- SlimScroll -->
+    <script src="{% static 'plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'plugins/fastclick/fastclick.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'dist/js/app.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <!-- page script -->
+    <script>
+
+
+  $(document).ready(function () {
+         $("#tree").treeview();
+         var table = $('#example').DataTable({
+             "ajax": '/collec/orderajax/',
+             select:"single",
+             "columns": [
+                 {
+                     "className": 'details-control',
+                     "orderable": false,
+                     "data": null,
+                     "defaultContent": '',
+                     "render": function (data,type,row,meta) {
+                         return '<i class="fa fa-plus-square span ispan" id='+'"'+'sign'+meta.row+'"'+'></i>';
+                     },
+                     width:"20px"
+                 },
+                  {
+                     "targets": 1,
+                     "orderable": true,
+                     "data": null,
+                     "defaultContent": '',
+                    "render":function(data,type,row,meta){
+                        var startIndex = meta.settings._iDisplayStart;
+                         return startIndex+meta.row+1;
+                     },
+                     width:"20px"
+                 },
+                { "data": "orderId",
+                   "render":function(data,type,row,meta){
+
+                       {% for ordd in sendComments %}
+                            var oddid ='{{ordd.orderId}}';
+                            if(data == oddid){
+                                $('#sign'+meta.row).attr('id','status'+oddid)
+                                $('#sign'+oddid).append("<i class='tip'></i>");
+                            }
+                      {% endfor %}
+                      return data;
+                   }
+                   },
+                 { "data": "Shipfrom" },
+                 { "data": "Shipto" },
+                 { "data": "PO" },
+                 { "data": "Forwarder" },
+                 { "data": "GrossWeight" },
+                 { "data": "Volume" },
+                 { "data": "Tracking" },
+                 { "data": "Packages" },
+                 {"data":"sendOrder_time"}
+             ],
+             "order": [[1, 'asc']]
+         });
+         // Add event listener for opening and closing details
+         $('#example tbody').on('click', 'td.details-control', function () {
+             var tr = $(this).closest('tr');
+             var tdi = tr.find("i.fa");
+             var row = table.row(tr);
+
+             if (row.child.isShown()) {
+                 // This row is already open - close it
+                 row.child.hide();
+                 tr.removeClass('shown');
+                 tdi.first().removeClass('fa-minus-square');
+                 tdi.first().addClass('fa-plus-square');
+             }
+             else {
+
+                 row.child(format(row.data())).show();
+                 tr.addClass('shown');
+                 tdi.first().removeClass('fa-plus-square');
+                 tdi.first().addClass('fa-minus-square');
+             }
+         });
+
+         table.on("user-select", function (e, dt, type, cell, originalEvent) {
+             if ($(cell.node()).hasClass("details-control")) {
+                 e.preventDefault();
+             }
+         });
+     });
+
+function format ( rowData ) {
+    var dit = $('<div/>')
+        .addClass( 'loading' )
+        .text( 'Loading...' );
+
+    $.ajax( {
+        url: '/collec/assetajax/',
+        data: {"orderId":rowData.orderId},
+        success: function ( dats ) {
+            dit.html('<div  style="padding-left:100px;"'+'id='+'"'+'ddv'+rowData.orderId+'"'+'><table  style="width:100%;text-align:center;" class="display"'+'id='+'"'+rowData.orderId+'"'+'>'+
+        '<thead>'+
+            '<tr>'+
+                 '<th style="width:40px;">Index</th>' +
+                 '<th>Category</th>' +
+                 '<th>Part Number</th>' +
+                 '<th>Product Description</th>' +
+                 '<th>Serial NO./Delivery Methods</th>' +
+                 '<th>Sent Quantity</th>' +
+                 '<th name="ReceiveQty">Receive Quantity</th>' +
+                 '<th>Operation</th>' +
+            '</tr>'+
+        '</thead>'+
+        '<tbody >'+
+         '</tbody>'+
+    '</table></div>').removeClass( 'loading' );
+
+     jt  =JSON.parse(dats)
+     dat = jt.data;
+      for(var i=0;i<dat.length;i++){
+        count =i;
+        count =count+1;
+        if(dat[i].receiveButton=='NO'){
+            $('#'+rowData.orderId+' tbody').append('<tr>' +
+                     '<td style="width:20px;">' + count+ '</td>' +
+                     '<td>' + dat[i].PartNo + '</td>' +
+                     '<td>' + dat[i].Category + '</td>' +
+                     '<td>' + dat[i].ProductDescription+ '</td>' +
+                     '<td>' +dat[i].SN + '</td>' +
+                     '<td>' + dat[i].Qty + '</td>' +
+                     '<td>'+'<input  required="required" id='+'"'+'status'+dat[i].id+'"'+'/>'+'</td>' +
+                     '<td><button onclick="BBQ(this.id)" id='+'"'+'button-'+dat[i].id+'"'+'>'+'receive</button></td>' +
+                 '</tr>');
+        }else{
+                 $('#'+rowData.orderId+' tbody').append('<tr>' +
+                     '<td>' +count+'</td>' +
+                     '<td>' + dat[i].PartNo + '</td>' +
+                     '<td>' + dat[i].ProductDescription+ '</td>' +
+                     '<td>' +dat[i].SN + '</td>' +
+                     '<td>' + dat[i].Qty + '</td>' +
+                     '<td style="width:70%;">'+'<strong id='+'"'+'receivestatus'+dat[i].id+'"'+'>'+dat[i].receiveQty+'</strong></td>' +
+                      '<td><button onclick="Cancle(this.id)" id='+'"'+'cancle-'+dat[i].id+'"'+'>'+'modify</button></td>' +
+                 '</tr>');}
+
+      }
+
+        $('#'+'ddv'+rowData.orderId).after('<div style="padding-left:100px;">'+
+          '<div style="float:left;padding-left:0px;">'+
+               '<h5 id="vendorcomments"> vendor comments:</h5>'+
+               '<textarea name="vendorcomments"   style="outline:none;background:#ecf0f5;border:0px;height: 80px;width: 500px;resize: none;" readonly="readonly" >'+rowData.vendorcomments+'</textarea>'+
+           '</div>'+
+            '<div style="float:right;padding-right:0px;" >'+
+                 '<h5 id="vendorcomments"> receive comments:</h5>'+
+               '<textarea  name="receivecomments"   style="height: 80px;width: 500px;resize: none;" id='+'"'+'comt'+rowData.orderId+'"'+'>'+rowData.receivecommets+'</textarea>'+
+            '</div>'+
+                 '</div>'+
+            '<br>'+
+             '<br>'+
+
+            '<div  align="center" style="clear:both;position:absolue;bottom:15px;">'+
+            '<br>'+
+                '<button style="width:150px;" onclick="save(this.id)"  id='+'"'+'save-'+rowData.orderId+'"'+'type="submit">Add Comments</button>'+
+                '&nbsp;&nbsp;&nbsp;&nbsp;'+
+                '<button style="width:165px;" onclick="complete(this.id)"  id='+'"'+'com-'+rowData.orderId+'"'+'type="submit">Fully Receive</button>'+
+            '</div>');
+      }
+    });
+    return dit;
+}
+
+    function BBQ(event){
+            var s=event.slice(7)
+            var q=$('#'+'status'+s).val();
+            sgl = confirm('Are you sure receiveQty:'+q)
+            if(sgl){
+                $.ajax({
+                   url:'/collec/sendAssetAmount/',
+                   data:{'asset_id':s,'amount':q},
+                   success:function(ret){
+                        ret = JSON.parse(ret);
+                        $('#'+'status'+s).replaceWith('<strong id='+'"'+'receivestatus'+s+'"'+'>'+ret['amount']+'</strong>');
+                        $('#button-'+s).replaceWith( '<button onclick="Cancle(this.id)" id='+'"'+'cancle-'+s+'"'+'>'+'modify</button>');
+                     }
+                 })
+            }
+        }
+
+
+    function  Cancle(event){
+         var s=event.slice(7)
+         var remount = $('#'+'receivestatus'+s).text();
+         sgl = confirm('Are you sure cancle receive?')
+          if(sgl){
+                $.ajax({
+                   url:'/collec/cancleReceiveAmount/',
+                   data:{'asset_id':s},
+                   success:function(ret){
+                        $('#'+'receivestatus'+s).replaceWith('<input  required="required" id='+'"'+'status'+s+'"'+'/>');
+                        $('#cancle-'+s).replaceWith('<button onclick="BBQ(this.id)" id='+'"'+'button-'+s+'"'+'>'+'receive</button>');
+                        document.getElementById('status'+s).value=remount;
+
+                     }
+                 });
+            }
+    }
+
+  function save(event){
+    var s=event.slice(5);
+    var coms =$('#'+'comt'+s).val();
+      $.ajax({
+              url:'/collec/ajax_saveReceive/',
+              data:{'ordid':s,'coments':coms},
+              success:function(data){
+                    $('#sign'+s).empty();
+                    alert('updateComment succesful!');
+                    window.location.href="/collec/receive/";
+                     }
+               });
+  }
+
+
+    function complete(event){
+         var s=event.slice(4)
+         var intcount = $('input[id^=status]').length;
+         var coms =$('#'+'comt'+s).val();
+         if(intcount==0){
+
+             $.ajax({
+                       url:'/collec/ajaxreceiveorder/',
+                       data:{'ordid':s,'coments':coms},
+                       success:function(ret){
+                            window.location.href='/collec/receive/';
+                         }
+                     });
+            }else{
+              alert('Please input receivecomments and ReceiveQty!!!');
+            }
+    }
+
+    </script>
+{% endblock %}

@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Smart Delivery To Nokia{% endblock %}
+
+{% block css %}
+
+<!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables/dataTables.bootstrap.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+  <!--<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+  <style>
+    table{
+         table-layout:fixed;
+        }
+        table tr td{
+        word-wrap:break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        }
+        table tr td:hover{
+           overflow: visible;
+           white-space: normal;
+        }
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc{
+                background-image:none;
+          }
+
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <!--&lt;!&ndash; Content Header (Page header) &ndash;&gt;-->
+    <section class="content-header">
+      <h1>
+       Update Shipment
+        <small>更新货运单</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Main</a></li>
+        <li class="active">Update Shipment</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+    <div class="row">
+    <div class="col-xs-12">
+
+      <div class="box">
+         <!--/.box-header -->
+        <div class="box-body">
+
+           <!--   <input id="addOrder" type="text">-->
+
+          <form action="/collec/addOrder/" method="post">
+              {% csrf_token %}
+            <strong>Shipment ID:</strong><input id="addOrder" name="Order" type="text" style="width:160px;" value="{{ord.orderId}}" required readonly="readonly" >
+            <br>
+            <br>
+           <table  class="table table-bordered table-striped">
+            <thead>
+             <tr>
+              <!--<th>index</th>-->
+              <th>Purchase Order <br>
+                  <span>(合同号)</span></th>
+              <th>Packages Qty <br>
+              <span>(包裹数量)</span></th>
+              <th>Gross Weight
+              <span>(重量)</span><br>
+                   <small>(KG)</small></th>
+              <th>Volume
+               <span>(体积)</span><br>
+               <small>(CM)</small></th>
+              <th>Forwarder <br>
+               <span>(承运商)</span><br>
+              </th>
+              <th>Tracking NO.
+                <span>(运单号)</span><br>
+                <small>(AWB/DN)</small></th>
+              <th>Ship from
+                <span>(发货方)</span><br>
+                <small>(Company/Email/Phone)</small></th>
+              <th>Ship to
+                <span>(接收方)</span><br>
+                <small>(Location/Email/Phone)</small></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr >
+                <td><textarea id="PO"    name="PO"  style="height: 70px;width: 100%;resize: none;text-align:center;" required>{{ord.PO}}</textarea></td>
+                <td><textarea id="Packages" name="Packages"  style="height: 70px;width: 100%;resize: none;text-align:center;" required>{{ord.Packages}}</textarea></td>
+                <td><textarea id="GrossWeight" name="GrossWeight" style="height: 70px;width: 100%;resize: none;text-align:center" required>{{ord.GrossWeight}}</textarea></td>
+                <td><textarea id="Volume"  name="Volume"  style="height: 70px;width: 100%;resize: none;text-align:center" required>{{ord.Volume}}</textarea></td>
+                <td><textarea id="Forwarder" name="Forwarder" style="height: 70px;width: 100%;resize: none;text-align:center" required>{{ord.Forwarder}}</textarea></td>
+                <td><textarea id="Tracking" name="Tracking" style="height: 70px;width: 100%;resize: none;text-align:center" required>{{ord.Tracking}}</textarea></td>
+                <td><textarea id="Shipfrom" name="Shipfrom" style="height: 70px;width: 100%;resize: none;text-align:center" required readonly="readonly">{{ord.Shipfrom}}</textarea></td>
+                <td><textarea id="Shipto" name="Shipto" style="height: 70px;width: 100%;resize: none;text-align:center" required  readonly="readonly">{{ord.Shipto}}</textarea></td>
+
+            </tr>
+
+            </tbody>
+          </table>
+            <table  id="table2" class="table table-bordered table-striped">
+                   <thead>
+
+                        <tr>
+                          <th style="width:45px;">index</th>
+                          <th>Product Category(产品分类)</th>
+                          <th>Part Number(产品型号)</th>
+                          <th>Product Description(产品描述)</th>
+                         <th>Serial NO.(序列号)/<br>
+                              Delivery Methods(交付方式)</th>
+                          <th>Quantity(数量)</th>
+                        </tr>
+
+                   </thead>
+                   <tbody>
+                     {% for ast in assts %}
+                        <tr>
+                            <td style="width:40px;">{{forloop.counter}}</td>
+                            <td><input value="{{ast.Category}}" type="text" name="loc" style="width:100%;" required readonly="readonly"></td>
+                            <td><input value="{{ast.PartNo}}" type="text" name="PartNo" style="width:100%;" required></td>
+                            <td><input value="{{ast.ProductDescription}}" type="text" name="ProductDescription" style="width:100%;" required></td>
+                            <td><input value="{{ast.SN}}" type="text" name="SN" style="width:100%;" required  readonly="readonly"></td>
+                            <td><input value="{{ast.Qty}}" type="text" name="Qty" style="width:100%;" required></td>
+                        </tr>
+                    {% endfor %}
+                   </tbody>
+               </table>
+
+
+            <br>
+            <div align="center" >
+                <h5 id="vendorcomments">vendor comments:</h5>
+                <textarea name="vendorcomments"   style="height: 100px;width: 600px;resize: none;">{{ord.vendorcomments|default_if_none:""}}</textarea>
+            </div>
+            <br>
+            <div align="center">
+                <button  id="addOrdersave" type="submit" name="save">Update</button>
+                <button  id="addOrdersubmit" type="button"    data-toggle="modal" onclick="confirmInfo()">Sent</button>
+                <div style="display:none;"><button  id="formsubmit" type="submit" name="submit">formsubmit</button></div>
+            </div>
+          </form>
+
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+    <!-- /.col -->
+    </div>
+
+
+<div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+	<div class="modal-dialog" style="width:1000px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					Submit Confirm
+				</h4>
+			</div>
+			<div class="modal-body">
+
+				<table   id="table_1" class="table table-bordered table-striped">
+                    <thead>
+						<tr>
+							 <th>Purchase Order</th>
+							 <th>Packages Qty</th>
+                            <th>Gross Weight</th>
+                            <th>Volume</th>
+                            <th>Forwarder</th>
+                            <th>Tracking NO.</th>
+                            <th>Ship from</th>
+                            <th>Ship to</th>
+						</tr>
+                    </thead>
+					<tbody>
+					</tbody>
+				</table>
+                <br>
+                <table   id="table_2" class="table table-bordered table-striped">
+                    <thead>
+						<tr>
+                          <th>Product Category</th>
+                          <th>Part Number</th>
+                          <th>Product Description</th>
+                          <th>Serial NO./Delivery Methods</th>
+                          <th>Quantity</th>
+						</tr>
+                    </thead>
+					<tbody>
+					</tbody>
+				</table>
+
+
+
+			</div>
+			<div class="modal-footer" >
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancle
+				</button>
+				<button type="submit"  class="btn btn-primary" onclick="SendOrder()">
+					Confirm
+				</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+    <!-- /.row -->
+    </section>
+
+{% endblock %}
+
+{% block script %}
+    <!-- DataTables -->
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'plugins/jquery.treeview.js' %}"></script>
+    <!-- SlimScroll -->
+    <script src="{% static 'plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'plugins/fastclick/fastclick.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'dist/js/app.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <!-- page script -->
+    <script>
+        function SendOrder(){
+              $('#myModal').modal('hide');
+              document.getElementById('formsubmit').click();
+
+        }
+
+        function confirmInfo(){
+              var po=$('#PO').val();
+              var packages=$('#Packages').val();
+             
+              var grossweight=$('#GrossWeight').val();
+              var volume=$('#Volume').val();
+              var forwarder=$('#Forwarder').val();
+              var tracking=$('#Tracking').val();
+              var shipfrom=$('#Shipfrom').val();
+              var shipto=$('#Shipto').val();
+
+              var partnos= document.getElementsByName('PartNo');
+              var productdescriptions= document.getElementsByName('ProductDescription');
+              var sns= document.getElementsByName('SN');
+              var qtys= document.getElementsByName('Qty');
+              var selectOp= document.getElementsByName('loc');
+
+              $('#table_1 tbody').replaceWith('<tbody></tbody>')
+              $('#table_2 tbody').replaceWith('<tbody></tbody>')
+
+              $('#table_1 tbody').append('<tr>'+
+              '<td>'+po+'</td>'+
+             '<td>'+packages+'</td>'+
+            
+             '<td>'+grossweight+'</td>'+
+             '<td>'+volume+'</td>'+
+             '<td>'+forwarder+'</td>'+
+             '<td>'+tracking+'</td>'+
+             '<td>'+shipfrom+'</td>'+
+             '<td>'+shipto+'</td></tr>')
+
+             for(var i=0;i<partnos.length;i++){
+                  $('#table_2 tbody').append('<tr>'+
+                     '<td>'+selectOp[i].value+'</td>'+
+                     '<td>'+partnos[i].value+'</td>'+
+                     '<td>'+productdescriptions[i].value+'</td>'+
+                     '<td>'+sns[i].value+'</td>'+
+                     '<td>'+qtys[i].value+'</td>'+
+                  '</tr>')
+             }
+              $('#myModal').modal('show');
+
+        }
+
+
+
+
+    </script>
+{% endblock %}

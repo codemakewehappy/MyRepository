@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Smart Delivery To Nokia{% endblock %}
+
+{% block css %}
+
+<!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.css' %}">
+  <!--<link rel="stylesheet" href="{% static 'plugins/datatables/dataTables.bootstrap.css' %}">-->
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+    <!--&lt;!&ndash; Content Header (Page header) &ndash;&gt;-->
+    <section class="content-header">
+      <h1>
+       Vendors Management
+       <small>供应商管理</small>
+      </h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Main</a></li>
+        <li class="active">Vendors Manage</li>
+      </ol>
+    </section>
+
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+             <div class="col-xs-12">
+
+       <div class="box">
+        <!-- /.box-header -->
+
+        <div class="box-body">
+
+          <table id="assets_table" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+
+              <th>Username</th>
+              <th>Password</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>FirstName</th>
+              <th>LastName</th>
+              <th>Operation</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for us in users %}
+
+                  {% if us.username  != request.user.username %}
+                <tr>
+                  <td>{{us.username}}</td>
+                  <td>{{us.password}}</td>
+                  <td>{{us.email}}</td>
+                  <td>{{us.extenduser.Phone}}</td>
+                  <td>{{us.first_name }}</td>
+                  <td>{{us.last_name}}</td>
+                  <td><a href="/collec/deleteUser/{{us.id}}/"  id="{{us.username}}"   class='down btn btn-default btn-xs'>delete</a></td>
+
+                </tr>
+                  {% endif %}
+                {% endfor %}
+            </tbody>
+          </table>
+             <br>
+            <div align="center">
+                <input type="button" value="addUser" onclick="addRowg()">
+                <input type="button" value="CancleaddUser" onclick="delRow()">
+                <button id="button">Sent Email</button>
+            </div>
+        </div>
+        <!-- /.box-body -->
+      </div>
+
+      <!-- /.box -->
+          </div>
+    <!-- /.col -->
+       </div>
+    <!-- /.row -->
+    </section>
+
+{% endblock %}
+
+{% block script %}
+    <!-- DataTables -->
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/dataTables.bootstrap.min.js' %}"></script>
+    <!-- SlimScroll -->
+    <script src="{% static 'plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'plugins/fastclick/fastclick.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'dist/js/app.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <!-- page script -->
+    <script>
+      $(function () {
+        var table = $("#assets_table").DataTable({
+          "paging": false,
+          "searching": true,
+          "ordering": true,
+          "info": true,
+          "autoWidth": false,
+
+
+        });
+
+        $('#assets_table tbody').on( 'click', 'tr', function () {
+          $(this).toggleClass('selected');
+    } );
+ 
+    $('#button').click( function () {
+
+         var selectData = table.rows('.selected').data();
+         var len = table.rows('.selected').data().length;
+          if(len==0){
+            alert('Please select Line!')
+          }else{
+              var arra = []
+              var arrb = []
+              for(var i=0;i<len;i++){
+                  arra.push(selectData[i][2]);
+                  arrb.push(selectData[i][0]);
+              }
+              $.ajax({
+                url:'/collec/sendpassword_eamil/',
+                data:{'usernames':JSON.stringify(arrb),'emails':JSON.stringify(arra)},
+                success:function(ret){
+                    alert('Send Email Successful!!!')
+                 }
+              });
+          }
+
+    } );
+
+      });
+
+       function addRowg(){
+        var rows = document.getElementById('assets_table').rows.length ; //获取表格行数
+        var newTr = assets_table.insertRow();//添加一行
+        <!--var newTd7 = newTr.insertCell();
+        <!--newTd7.innerHTML = '<th>'+rows+'</th>';-->
+        var newTd0 = newTr.insertCell();//第一列
+        newTd0.innerHTML = '<th><input type="text" id="addusername" name="username" style="width:100%;"  required></th>';
+        var newTd1 = newTr.insertCell();
+        newTd1.innerHTML = '<th><input type="text"  id="addpassword" name="password" style="width:100%;"  required></th>';
+        var newTd2 = newTr.insertCell();
+        newTd2.innerHTML =  '<th><input type="text"  id="addemail" name="email" style="width:100%;"  required></th>';
+        var newTd6 = newTr.insertCell();
+        newTd6.innerHTML =  '<th><input type="text"  id="addphone"  name="phone" style="width:100%;"  required></th>';
+        var newTd3 = newTr.insertCell();
+        newTd3.innerHTML =  '<th><input type="text"  id="addfirstname"  name="firstname" style="width:100%;"  required></th>';
+        var newTd4 = newTr.insertCell();
+        newTd4.innerHTML =  '<th><input type="text"  id="addlastname" name="lastname" style="width:100%;"  required></th>';
+        var newTd5 = newTr.insertCell();
+        newTd5.innerHTML =  "<th><a href='javascript:void(0);' onclick='addUser()'  class='down btn btn-default btn-xs' style='width:55%;'>save</a></th>";
+    }
+
+ function delRow(){
+   var tbobj=document.getElementById('assets_table');
+   var rows = document.getElementById('assets_table').rows.length ;
+       if(tbobj.rows.length>3){
+           tbobj.deleteRow(tbobj.rows.length-1);
+       }else{
+        if(tbobj.rows.length>3){
+          tbobj.deleteRow(tbobj.rows.length-1);
+        }
+   }
+}
+
+         function addUser(){
+          var uname = $('#addusername').val()
+          var upassword = $('#addpassword').val()
+          var uemail = $('#addemail').val()
+          var ufirstname = $('#addfirstname').val()
+          var ulastname = $('#addlastname').val()
+          var uphone = $('#addphone').val()
+            $.ajax({
+               url:"{% url 'collec:addUser' %}",
+               type:"GET",
+               data:{"uname":uname,"upassword":upassword,"uemail":uemail,"ufirstname":ufirstname,"ulastname":ulastname,'uphone':uphone},
+               <!--headers:{"X-CSRFToken":$("[name='csrfmiddlewaretoken']").val()},-->
+               success:function(ret){
+                    ret = JSON.parse(ret);
+                    alert(ret["infor"])
+                    window.location.href="/collec/vendormanage/";
+
+                 }
+             })
+       }
+
+
+    </script>
+{% endblock %}

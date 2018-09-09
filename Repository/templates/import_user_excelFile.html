@@ -1,0 +1,89 @@
+{% load static %}
+<html lang="en" >
+<head>
+<title>Import User | Smart Delivery Management</title>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/urlify.js"></script>
+<script type="text/javascript" src="/static/admin/js/prepopulate.js"></script>
+<script type="text/javascript" src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
+<script type="text/javascript" src="{% static 'plugins/jQuery/jquery-2.2.3.min.js'%}"></script>
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+<body class=" app-collec model-extenduser change-form"
+  data-admin-utc-offset="28800">
+
+<!-- Container -->
+<div id="container">
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+
+<h1 id="site-name">Smart Delivery Management</h1>
+        </div>
+        <div id="user-tools">
+
+                WELCOME
+                <strong>{{request.user.username}}</strong>.
+
+                <a href="/collec/admin_password_change/">CHANGE PASSWORD</a> /
+
+                <a href="/collec/mylogout/">LOG OUT</a>
+
+        </div>
+
+
+
+    </div>
+    <!-- END Header -->
+
+<div class="breadcrumbs">
+<a href="javascrip:;">Login</a>
+&rsaquo; <a href="/admin/collec/extenduser/">Extend users</a>
+&rsaquo; Import User
+</div>
+
+    <!-- Content -->
+    <div id="content" class="colM">
+        <div id="content-main">
+     <form method="post" action="/collec/import_user_excle/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            <input type="file" name="excel"/>
+            <input type="button" id="cancle" name="cancel" value="Cancel" />
+            <input type="submit" name="upload" value="Upload"/>
+
+        </p>
+    </form>
+    <P>Please upload the Excel file according to the template. Please ensure that the content that needs to be uploaded is in the first table</P>
+    <a href='/collec/download_user_excle/'>Template</a>
+    <br>
+    <p>{{information}}</p>
+
+
+
+
+ </div>
+
+
+
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+<script>
+    $('#cancle').click(function(){
+        window.location.href='/collec/import_user/'
+    })
+
+</script>
+</body>
+</html>

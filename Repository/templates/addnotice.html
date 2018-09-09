@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<title>Add Notice | Smart Delivery Management</title>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+
+
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/urlify.js"></script>
+<script type="text/javascript" src="/static/admin/js/prepopulate.js"></script>
+<script type="text/javascript" src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+
+<body class=" app-collec model-extenduser change-form"
+  data-admin-utc-offset="28800">
+
+<!-- Container -->
+<div id="container">
+
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+
+<h1 id="site-name">Smart Delivery Management</h1>
+
+        </div>
+
+
+        <div id="user-tools">
+
+                WELCOME
+                <strong>{{request.user.username}}</strong>.
+
+                <a href="/collec/admin_password_change/">CHANGE PASSWORD</a> /
+
+                <a href="/collec/mylogout/">LOG OUT</a>
+
+        </div>
+
+
+
+    </div>
+    <!-- END Header -->
+
+<div class="breadcrumbs">
+<a href="javascrip:;">Login</a>
+&rsaquo; <a href="/admin/collec/extenduser/">Extend users</a>
+&rsaquo; Add Notice
+</div>
+    <!-- Content -->
+    <div id="content" class="colM">
+        <div id="content-main">
+
+
+
+<form  action="/collec/form_addnotice/" method="post" id="extenduser_form" >
+    {% csrf_token %}
+<div>
+
+  <fieldset class="module aligned ">
+
+    <div class="form-row" style="font-size: 18px">Add Notice:</div>
+
+        <div class="form-row field-user" style="padding: 10px 100px">
+              <div>
+                        <label class="required" >Notice:</label>
+                  <textarea  name="notice"  required="required" class="vTextField" style="width:900px;height:200px;resize:none;"></textarea>
+
+
+                </div>
+
+
+        </div>
+
+</fieldset>
+
+
+
+<div class="submit-row">
+<input type="submit" value="ADD" class="default" name="_save" />
+</div>
+
+
+
+    <!--<script type="text/javascript"-->
+            <!--id="django-admin-form-add-constants"-->
+            <!--src="/static/admin/js/change_form.js"-->
+
+                <!--data-model-name="extenduser"-->
+            <!--&gt;-->
+    <!--</script>-->
+
+
+
+
+<!--<script type="text/javascript"-->
+        <!--id="django-admin-prepopulated-fields-constants"-->
+        <!--src="/static/admin/js/prepopulate_init.js"-->
+        <!--data-prepopulated-fields="[]">-->
+<!--</script>-->
+
+
+</div>
+</form>
+ </div>
+
+
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+
+</body>
+</html>
